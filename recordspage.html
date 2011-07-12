@@ -15,17 +15,30 @@
                 {{ chart_url_string }} <br><br>
             </div>
             <div>
-                impact_rating species_count sampled_area month year description
-            </div>
-            <div>
-                {% for record in records %}
-                    {{ record.impact_rating }} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                    {{ record.species_count }} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                    {{ record.sampled_area }} &nbsp; &nbsp; &nbsp; &nbsp;
-                    {{ record.month }} &nbsp;
-                    {{ record.year }} &nbsp; &nbsp; &nbsp;
-                    {{ record.description }} <br>
-                {% endfor %}
+                <table><tbody>
+                    <tr>
+                        <th>impact_rating</th>
+                        <th>species_count</th>
+                        <th>sampled_area</th>
+                        <th>teacher</th>
+                        <th>school</th>
+                        <th>month</th>
+                        <th>year</th>
+                        <th>description</th>
+                    </tr>
+                    {% for record in records %}
+                        <tr>
+                            <td>{{ record.impact_rating }}</td>
+                            <td>{{ record.species_count }}</td>
+                            <td>{{ record.sampled_area }}</td>
+                            <td>{{ record.teacher }}</td>
+                            <td>{{ record.school }}</td>
+                            <td>{{ record.month }}</td>
+                            <td>{{ record.year }}</td>
+                            <td>{{ record.description }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody></table>
             </div>
         </div>
     </body>

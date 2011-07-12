@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+        <title>Diversity Database</title>
+        <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+    </head>
+    <body>
+        <div id="wrap">
+            <div>
+                <h4>Add a new teacher or school</h4>
+            <div>
+                <form action="/new" method="post" name="newteacherform">
+                    Teacher name:
+                    <input type="text" name="teacher" size=50 maxlength=50>
+                    <input type="submit" value="Add teacher" name="submit"/>
+                </form>
+            </div>
+             <div>
+                <form action="/new" method="post" name="newschoolform">
+                    School name:
+                    <input type="text" name="school" size=100 maxlength=100>
+                    <input type="submit" value="Add school" name="submit"/>
+                </form>
+            </div>
+            <div>
+                {{ message }} <br><br>
+            </div>
+            <div>
+                <form action="/" method="post" name="returnform">
+                    <input type="submit" value="Done" name="submit"/>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

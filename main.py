@@ -15,7 +15,20 @@ class DiversityRecord(db.Model):
     month = db.StringProperty()
     year = db.IntegerProperty()
     description = db.TextProperty()
+    teacher = db.StringProperty()
+    school = db.StringProperty()
 
+class Teacher(db.Model):
+    """
+    Record of valid teacher names
+    """
+    name = db.TextProperty()
+
+class School(db.Model):
+    """
+    Record of valid school names
+    """
+    name = db.TextProperty()
 
 class MainHandler(webapp.RequestHandler):
     """
@@ -27,7 +40,11 @@ class MainHandler(webapp.RequestHandler):
             self.redirect(users.create_login_url(self.request.uri))
         else:
             error_message = self.request.get('error_message')
-            template_values = {'error_message': error_message}
+            teachers = db.GqlQuery('SELECT * FROM Teacher')
+            schools = db.GqlQuery('SELECT * FROM School')
+            template_values = {'error_message': error_message,
+                               'teachers': teachers,
+                               'schools': schools}
             self.response.out.write(template.render('mainpage.html', template_values))
 
     def post(self):
@@ -48,13 +65,26 @@ class NewRecordHandler(webapp.RequestHandler):
             return False
 
     def post(self):
+        error_message = ''
         user = users.get_current_user()
         if not user:
             self.redirect(users.create_login_url(self.request.uri))
         else:
             sampled_area = self.request.get('sampled_area')
             species_count = self.request.get('species_count')
-            if not self.is_numeric(sampled_area):
+            teacher = self.request.get('teacher')
+            school = self.request.get('school')
+            month = self.request.get('month')
+            year = self.request.get('year')
+            if teacher == "None":
+                error_message = 'Invalid teacher name'
+            elif school == "None":
+                error_message = 'Invalid school name'
+            elif month == "0":
+                error_message = 'Invalid month'
+            elif year == "0":
+                error_message = 'Invalid year'
+            elif not self.is_numeric(sampled_area):
                 error_message = 'Invalid sampled area'
             elif not self.is_numeric(species_count):
                 error_message = 'Invalid species count'
@@ -63,9 +93,11 @@ class NewRecordHandler(webapp.RequestHandler):
                 diversity_record.sampled_area = float(sampled_area)
                 diversity_record.species_count = int(species_count)
                 diversity_record.impact_rating = int(self.request.get('impact_rating'))
-                diversity_record.month = self.request.get('month')
-                diversity_record.year = int(self.request.get('year'))
+                diversity_record.month = month
+                diversity_record.year = int(year)
                 diversity_record.description = self.request.get('description')
+                diversity_record.teacher = teacher
+                diversity_record.school = school
                 diversity_record.put()
                 error_message = 'Success - record added'
             redirect_string = '/?error_message=' + error_message
@@ -80,6 +112,8 @@ class ViewRecordsHandler(webapp.RequestHandler):
         if not user:
             self.redirect(users.create_login_url(self.request.uri))
         else:
+            teacher = self.request.get('teacher')
+            school = self.request.get('school')
             month = self.request.get('month')
             year = self.request.get('year')
             query_string = "SELECT * FROM DiversityRecord"
@@ -92,6 +126,19 @@ class ViewRecordsHandler(webapp.RequestHandler):
                     query_string = query_string + " AND year = " + year
                 else:
                     query_string = query_string + " WHERE year = " + year
+                    where_clause = True
+            if teacher != "0":
+                if where_clause:
+                    query_string = query_string + " AND teacher = '" + teacher + "'"
+                else:
+                    query_string = query_string + " WHERE teacher = '" + teacher + "'"
+                    where_clause = True
+            if school != "0":
+                if where_clause:
+                    query_string = query_string + " AND school = '" + school + "'"
+                else:
+                    query_string = query_string + " WHERE school = '" + school + "'"
+                    where_clause = True
             records = db.GqlQuery(query_string)
             records_by_impact = [0,0,0,0,0,0,0,0,0,0,0]
             species_by_impact = [0,0,0,0,0,0,0,0,0,0,0]
@@ -117,11 +164,53 @@ class ViewRecordsHandler(webapp.RequestHandler):
                                'chart_url_string': chart_url_string}
             self.response.out.write(template.render('recordspage.html', template_values))
 
+class NewTeacherSchoolHandler(webapp.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+        if not user:
+            self.redirect(users.create_login_url(self.request.uri))
+        else:
+            teacher = self.request.get('teacher')
+            school = self.request.get('school')
+            message = ''
+            if teacher:
+                teachers = db.GqlQuery('SELECT * FROM Teacher')
+                is_in_list = False
+                for each_teacher in teachers:
+                    if each_teacher.name == teacher:
+                        is_in_list = True
+                if not is_in_list:
+                    new_teacher = Teacher()
+                    new_teacher.name = teacher
+                    new_teacher.put()
+                    message = 'Added %s to the list of teachers' % teacher
+                else:
+                    message = '%s was already in the list of teachers' % teacher
+            if school:
+                schools = db.GqlQuery('Select * FROM School')
+                is_in_list = False
+                for each_school in schools:
+                    if each_school.name == school:
+                        is_in_list = True
+                if not is_in_list:
+                    new_school = School()
+                    new_school.name = school
+                    new_school.put()
+                    message = 'Added %s to the list of schools' % school
+                else:
+                    message = '%s was already in the list of schools' % school
+            template_values = {'message': message}
+            self.response.out.write(template.render('newteacherschoolpage.html', template_values))
+
+    def get(self):
+        self.post()
+
 
 def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                           ('/addrecord', NewRecordHandler),
-                                          ('/viewrecords', ViewRecordsHandler)],
+                                          ('/viewrecords', ViewRecordsHandler),
+                                          ('/new', NewTeacherSchoolHandler)],
                                          debug=True)
     run_wsgi_app(application)
 
