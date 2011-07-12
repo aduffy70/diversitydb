@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+        <title>Diversity Database</title>
+        <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="error">
+                <h3>{{error_message}}</h3>
+            </div>
+            <h4> Submit a new diversity record</h4>
+            <form action="/addrecord" method="post" name="addrecordform">
+                <div>
+                    Human impact rating:
+                    <select name="impact_rating">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div>
+                    Number of species:
+                    <input type="text" value="0" name="species_count" size=4 maxlength=4>
+                </div>
+                <div>
+                    Area sampled (sq. meters):
+                    <input type="text" value="0.0" name="sampled_area" size=5 maxlength=5>
+                </div>
+                <div>
+                    Month:
+                    <select name="month">
+                        <option value="Jan">Jan</option>
+                        <option value="Feb">Feb</option>
+                        <option value="Mar">Mar</option>
+                        <option value="Apr">Apr</option>
+                        <option value="May">May</option>
+                        <option value="Jun">Jun</option>
+                        <option value="Jul">Jul</option>
+                        <option value="Aug">Aug</option>
+                        <option value="Sep">Sep</option>
+                        <option value="Oct">Oct</option>
+                        <option value="Nov">Nov</option>
+                        <option value="Dec">Dec</option>
+                    </select> &nbsp;
+                    Year:
+                    <select name="year">
+                        <option value="2011">2011</option>
+                        <option value="2012">2012</option>
+                        <option value="2013">2013</option>
+                        <option value="2014">2014</option>
+                        <option value="2015">2015</option>
+                    </select>
+                </div>
+                <div>
+                    Description:
+                    <input type="text" name="description" size=100 maxlength=200>
+                </div>
+                <div>
+                    <input type="submit" value="Submit" name="submit"/>
+                </div>
+            </form>
+            <hr>
+        </div>
+        <div>
+            <h4>Filter records</h4>
+            <form action="/viewrecords" method="post" name="viewrecordsform">
+                <div>
+                    Month:
+                    <select name="month">
+                        <option value="0">All</option>
+                        <option value="Jan">Jan</option>
+                        <option value="Feb">Feb</option>
+                        <option value="Mar">Mar</option>
+                        <option value="Apr">Apr</option>
+                        <option value="May">May</option>
+                        <option value="Jun">Jun</option>
+                        <option value="Jul">Jul</option>
+                        <option value="Aug">Aug</option>
+                        <option value="Sep">Sep</option>
+                        <option value="Oct">Oct</option>
+                        <option value="Nov">Nov</option>
+                        <option value="Dec">Dec</option>
+                    </select> &nbsp;
+                    Year:
+                    <select name="year">
+                        <option value="0">All</option>
+                        <option value="2011">2011</option>
+                        <option value="2012">2012</option>
+                        <option value="2013">2013</option>
+                        <option value="2014">2014</option>
+                        <option value="2015">2015</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="submit" value="Submit" name="submit"/>
+                </div>
+            </form>
+        </div>
+        <div>
+            <a class="helplink" href="/helpfiles/help.html" align="right" target="_blank">Help/TOS</a>
+        </div>
+    </body>
+</html>

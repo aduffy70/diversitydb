@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+        <title>Diversity Database</title>
+        <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+    </head>
+    <body>
+        <div id="wrap">
+            <div>
+                <form action="/" method="post" name="returnform">
+                    <input type="submit" value="Return to Form" name="submit"/>
+                </form>
+            </div>
+            <div>
+                {{ chart_url_string }} <br><br>
+            </div>
+            <div>
+                impact_rating species_count sampled_area month year description
+            </div>
+            <div>
+                {% for record in records %}
+                    {{ record.impact_rating }} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    {{ record.species_count }} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    {{ record.sampled_area }} &nbsp; &nbsp; &nbsp; &nbsp;
+                    {{ record.month }} &nbsp;
+                    {{ record.year }} &nbsp; &nbsp; &nbsp;
+                    {{ record.description }} <br>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+</html>
