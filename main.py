@@ -30,9 +30,9 @@ class School(db.Model):
     """
     name = db.TextProperty()
 
-class MainHandler(webapp.RequestHandler):
+class MainPageHandler(webapp.RequestHandler):
     """
-    Main page with form to enter data and form to view data summary
+    Main page with form to view or filter data
     """
     def get(self):
         user = users.get_current_user()
@@ -46,6 +46,27 @@ class MainHandler(webapp.RequestHandler):
                                'teachers': teachers,
                                'schools': schools}
             self.response.out.write(template.render('mainpage.html', template_values))
+
+    def post(self):
+        self.get()
+
+class DataEntryPageHandler(webapp.RequestHandler):
+    """
+    Data entry page with form to enter new data points and buttons to
+    add new teachers or schools.
+    """
+    def get(self):
+        user = users.get_current_user()
+        if not user:
+            self.redirect(users.create_login_url(self.request.uri))
+        else:
+            error_message = self.request.get('error_message')
+            teachers = db.GqlQuery('SELECT * FROM Teacher')
+            schools = db.GqlQuery('SELECT * FROM School')
+            template_values = {'error_message': error_message,
+                               'teachers': teachers,
+                               'schools': schools}
+        self.response.out.write(template.render('dataentrypage.html', template_values))
 
     def post(self):
         self.get()
@@ -207,10 +228,11 @@ class NewTeacherSchoolHandler(webapp.RequestHandler):
 
 
 def main():
-    application = webapp.WSGIApplication([('/', MainHandler),
+    application = webapp.WSGIApplication([('/', MainPageHandler),
                                           ('/addrecord', NewRecordHandler),
                                           ('/viewrecords', ViewRecordsHandler),
-                                          ('/new', NewTeacherSchoolHandler)],
+                                          ('/new', NewTeacherSchoolHandler),
+                                          ('/data', DataEntryPageHandler)],
                                          debug=True)
     run_wsgi_app(application)
 
